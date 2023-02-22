@@ -39,13 +39,13 @@ Also, it relies on [AdonisJS drive](https://docs.adonisjs.com/guides/drive) for 
 Install the package from the npm registry as follows.
 
 ```sh
-npm i @adonisjs/attachment-lite
+npm i @dbharat/attachment-lite-sharp
 ```
 
 Next, configure the package by running the following ace command.
 
 ```sh
-node ace configure @adonisjs/attachment-lite
+node ace configure @dbharat/attachment-lite-sharp
 ```
 
 ## Usage
@@ -100,6 +100,9 @@ import {
 class User extends BaseModel {
   @attachment()
   public avatar: AttachmentContract
+
+  @attachment({variants: ['thumbnail', 'medium', 'large']})
+  public photo: AttachmentContract
 }
 ```
 
@@ -111,15 +114,47 @@ import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 class UsersController {
   public store({ request }: HttpContextContract) {
     const avatar = request.file('avatar')!
+    const photo = request.file('photo')!
     const user = new User()
 
     user.avatar = Attachment.fromFile(avatar)
+    user.photo = Attachment.fromFile(photo)
     await user.save()
   }
 }
 ```
 
 The `Attachment.fromFile` creates an instance of the Attachment class from the user uploaded file. When you persist the model to the database, the attachment-lite will write the file to the disk.
+
+
+You also need to add `config/attachment.ts` file incase you need to use variants
+```ts
+import { AttachmentConfig } from '@ioc:Adonis/Addons/AttachmentLite';
+const attachmentConfig: AttachmentConfig = {
+      variants: {
+        thumbnail: {
+          resize: 300,
+          format: 'jpg'
+        },
+        medium: {
+          resize: {
+            width: 500,
+            fit: 'contain',
+            position: 'right top',
+          },
+          format: [ 'jpg', {
+            quality: 10,
+            mozjpeg: true
+          }]
+        },
+        large: {
+          resize: 1500,
+          format: 'jpg'
+        }
+      }
+    }
+    export default attachmentConfig
+```
 
 ### Handling updates
 You can update the property with a newly uploaded user file, and the package will take care of removing the old file and storing the new one.
@@ -226,6 +261,9 @@ Enable the `preComputeUrl` flag to pre compute the URLs after SELECT queries. Fo
 class User extends BaseModel {
   @attachment({ preComputeUrl: true })
   public avatar: AttachmentContract
+
+  @attachment({ preComputeUrl: true, variants: ['thumbnail', 'medium'] })
+  public photo: AttachmentContract
 }
 ```
 
@@ -335,10 +373,10 @@ export default Factory.define(Post, async ({ faker }) => {
 [github-actions-image]: https://img.shields.io/github/workflow/status/adonisjs/attachment-lite/test?style=for-the-badge
 [github-actions-url]: https://github.com/adonisjs/attachment-lite/actions/workflows/test.yml "github-actions"
 
-[npm-image]: https://img.shields.io/npm/v/@adonisjs/attachment-lite.svg?style=for-the-badge&logo=npm
-[npm-url]: https://npmjs.org/package/@adonisjs/attachment-lite "npm"
+[npm-image]: https://img.shields.io/npm/v/@dbharat/attachment-lite-sharp.svg?style=for-the-badge&logo=npm
+[npm-url]: https://npmjs.org/package/@dbharat/attachment-lite-sharp "npm"
 
-[license-image]: https://img.shields.io/npm/l/@adonisjs/attachment-lite?color=blueviolet&style=for-the-badge
+[license-image]: https://img.shields.io/npm/l/@dbharat/attachment-lite-sharp?color=blueviolet&style=for-the-badge
 [license-url]: LICENSE.md "license"
 
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript

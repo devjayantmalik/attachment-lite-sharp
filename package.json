@@ -1,5 +1,5 @@
 {
-  "name": "@adonisjs/attachment-lite",
+  "name": "@dbharat/attachment-lite-sharp",
   "version": "1.0.7",
   "description": "Turn any field on your Lucid model to an attachment data type",
   "main": "build/providers/AttachmentLiteProvider.js",
