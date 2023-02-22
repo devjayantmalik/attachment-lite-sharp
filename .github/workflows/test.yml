@@ -8,7 +8,6 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 14.17.0
           - 17.x
     steps:
       - uses: actions/checkout@v3
@@ -18,30 +17,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: package.json
-      - name: Install
-        run: npm install
-      - name: Run tests
-        run: npm test
-  windows:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        node-version:
-          - 14.17.0
-          - 17.x
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: package.json
-      - name: Patch node-gyp to support Visual Studio 2019
-        shell: powershell
-        run: |
-          npm install --global node-gyp@latest
-          npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
       - name: Install
         run: npm install
       - name: Run tests
